@@ -245,17 +245,24 @@
   /* Проекты: строки с логотипом */
   .orgs{border-top:1px solid var(--line-soft)}
   .org{
-    display:grid;grid-template-columns:72px 1fr auto;gap:1.2rem;align-items:center;
+    display:grid;grid-template-columns:112px 1fr auto;gap:1.4rem;align-items:center;
     padding:1.2rem 0;border-bottom:1px solid var(--line-soft);
     text-decoration:none;
   }
-  .org img{width:72px;height:72px;object-fit:contain;background:#fff;padding:6px}
+  /* Логотипы на тёмной стене: края растушёваны в фон, на наведении приближаются */
+  .org img{
+    width:112px;height:112px;object-fit:cover;
+    -webkit-mask-image:radial-gradient(closest-side,#000 84%,transparent);
+    mask-image:radial-gradient(closest-side,#000 84%,transparent);
+    transition:transform var(--t-comp) var(--exit);
+  }
   .org b{display:block;font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;color:var(--white)}
   .org span{color:var(--muted);font-size:.95rem}
   .org .go{font-family:var(--mono);font-size:1.1rem;color:var(--dim);transition:transform var(--t-comp) var(--exit),color var(--t-micro) var(--enter)}
   .org>div{transition:transform var(--t-micro) var(--enter)}
   @media (hover:hover){
     .org:hover>div{transform:translateX(6px)}
+    .org:hover img{transform:scale(1.08)}
     .org:hover .go{color:var(--ember);transform:translate(4px,-4px)}
   }
 
@@ -382,8 +389,8 @@
 
   @media (max-width:520px){
     .head .meta{display:none}
-    .org{grid-template-columns:56px 1fr;gap:1rem}
-    .org img{width:56px;height:56px}
+    .org{grid-template-columns:72px 1fr;gap:1rem}
+    .org img{width:72px;height:72px}
     .org .go{display:none}
     .pics img{height:220px}
   }
@@ -447,12 +454,12 @@
     <div class="head reveal"><h2>Проекты</h2><span class="meta">01</span></div>
     <div class="orgs">
       <a class="org reveal" href="https://anv-ai.ru/" target="_blank" rel="noopener">
-        <img src="img/logo-anv.webp" alt="Логотип ANV-Ai" loading="lazy">
+        <img src="img/logo-anv-wall.webp" alt="Логотип ANV-Ai" width="384" height="384" loading="lazy">
         <div><b>Агентство Новых Перспектив</b><span>ANV-Ai · внедрение ИИ в бизнес-процессы</span></div>
         <span class="go">↗</span>
       </a>
       <a class="org reveal" href="https://iivobrazovanii.club/" target="_blank" rel="noopener">
-        <img src="img/logo-club.webp" alt="Логотип Клуба «ИИ в образованИИ»" loading="lazy">
+        <img src="img/logo-club-wall.webp" alt="Логотип Клуба «ИИ в образованИИ»" width="384" height="384" loading="lazy">
         <div><b>Клуб «ИИ в образованИИ»</b><span>площадка для обмена практиками и внедрения технологий</span></div>
         <span class="go">↗</span>
       </a>
