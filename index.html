@@ -24,6 +24,7 @@
   :root{
     --bg:#0d0d0f;
     --text:#f2f1ef;
+    --white:#ffffff;
     --muted:#8b8b88;
     --dim:#66665f;
     --line:rgba(242,241,239,.13);
@@ -53,7 +54,7 @@
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
   }
-  img{max-width:100%;display:block}
+  img{max-width:100%;height:auto;display:block}
   a{color:inherit}
   p{margin:0 0 1rem}
   p:last-child{margin-bottom:0}
@@ -163,8 +164,8 @@
   .hero{padding:clamp(2.5rem,7vw,5rem) 0 clamp(1rem,3vw,2rem)}
   .hero .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(1.5rem,5vw,4rem);align-items:center}
   @media (max-width:860px){.hero .wrap{grid-template-columns:1fr}}
-  .portrait{overflow:hidden;aspect-ratio:4/5;background:#17171a}
-  .portrait img{width:100%;height:100%;object-fit:cover}
+  .portrait{aspect-ratio:4/5}
+  .portrait img{height:100%;object-fit:cover}
   .js .portrait img{opacity:0;transform:scale(1.08)}
   .js .portrait.in img{
     opacity:1;transform:none;
@@ -182,8 +183,8 @@
     line-height:1.02;
     text-transform:uppercase;
     letter-spacing:.002em;
-    /* Переливание: блик проходит по тексту диагональю на повторе */
-    background:linear-gradient(100deg,#b4b4ba 0%,#b4b4ba 34%,#ffffff 50%,#b4b4ba 66%,#b4b4ba 100%);
+    /* Ярко-белое имя; по нему на повторе проходит тёплый блик */
+    background:linear-gradient(100deg,#fff 0%,#fff 44%,#ffd6c8 50%,#fff 56%,#fff 100%);
     background-size:240% 100%;
     background-position:150% 0;
     -webkit-background-clip:text;background-clip:text;color:transparent;
@@ -212,12 +213,12 @@
   .stat{padding:1.1rem 1rem 0 0}
   .stat+.stat{padding-left:1rem;border-left:1px solid var(--line-soft)}
   .stat b{
-    display:block;
+    display:block;color:var(--white);
     font-family:var(--display);font-size:clamp(1.8rem,3.4vw,2.4rem);font-weight:700;
     letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums;
   }
   .stat b i{font-style:normal;color:var(--ember)}
-  .stat span{display:block;margin-top:.4rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;line-height:1.5;color:var(--dim)}
+  .stat>span{display:block;margin-top:.4rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;line-height:1.5;color:var(--dim)}
   @media (max-width:520px){
     .stats{grid-template-columns:1fr}
     .stat,.stat+.stat{padding:1rem 0;border-left:0;border-bottom:1px solid var(--line-soft)}
@@ -233,11 +234,11 @@
   .head h2{
     margin:0;
     font-family:var(--display);font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:600;
-    letter-spacing:-.025em;line-height:1.15;
+    letter-spacing:-.025em;line-height:1.15;color:var(--white);
   }
   .head .meta{color:var(--dim);white-space:nowrap}
   .sub{
-    margin:clamp(3rem,7vw,4.5rem) 0 1.6rem;
+    margin:clamp(3rem,7vw,4.5rem) 0 1.6rem;color:var(--white);
     font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
   }
 
@@ -249,7 +250,7 @@
     text-decoration:none;
   }
   .org img{width:72px;height:72px;object-fit:contain;background:#fff;padding:6px}
-  .org b{display:block;font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em}
+  .org b{display:block;font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;color:var(--white)}
   .org span{color:var(--muted);font-size:.95rem}
   .org .go{font-family:var(--mono);font-size:1.1rem;color:var(--dim);transition:transform var(--t-comp) var(--exit),color var(--t-micro) var(--enter)}
   .org>div{transition:transform var(--t-micro) var(--enter)}
@@ -258,10 +259,32 @@
     .org:hover .go{color:var(--ember);transform:translate(4px,-4px)}
   }
 
-  .frame{overflow:hidden;background:#fff}
-  .frame img{width:100%;transition:transform 1.2s var(--exit)}
-  @media (hover:hover){.frame:hover img{transform:scale(1.025)}}
-  .banner{margin-top:2rem}
+  /* Картинки: мягкая подсветка сзади, края растушёваны и уходят в фон,
+     на наведении картинка приближается, а подсветка разгорается.
+     Маска стоит на самой картинке, поэтому растушёвка едет вместе с ней
+     и при приближении края по-прежнему мягкие, без жёсткой обрезки. */
+  .ph{position:relative;isolation:isolate}
+  /* Подсветка шире картинки — у края окна обрезаем, чтобы не было горизонтальной прокрутки */
+  .hero,main{overflow-x:clip}
+  .ph::before{
+    content:"";position:absolute;inset:-14% -8%;z-index:-1;pointer-events:none;
+    background:radial-gradient(closest-side,rgba(150,170,255,.24),rgba(150,170,255,.08) 55%,transparent);
+    opacity:.75;
+    transition:opacity var(--t-comp) var(--enter),transform var(--t-page) var(--enter);
+  }
+  .ph img{
+    width:100%;
+    -webkit-mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
+    -webkit-mask-composite:source-in;
+    mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
+    mask-composite:intersect;
+    transition:transform 1.2s var(--exit);
+  }
+  @media (hover:hover){
+    .ph:hover::before{opacity:1;transform:scale(1.08)}
+    .ph:hover img{transform:scale(1.06)}
+  }
+  .banner{margin-top:2.4rem}
 
   /* Компетенции: нумерованные строки в две колонки */
   .rows{display:grid;grid-template-columns:1fr 1fr;column-gap:3rem;border-top:1px solid var(--line-soft)}
@@ -277,50 +300,45 @@
     .row:hover>span:last-child{color:var(--text)}
   }
 
-  .partners{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:2.4rem;background:var(--line-soft);border:1px solid var(--line-soft)}
-  @media (max-width:640px){.partners{grid-template-columns:1fr}}
-  .partners div{background:var(--bg);padding:1.2rem;display:grid;place-items:center;min-height:140px}
-  .partners img{
-    max-height:92px;width:auto;object-fit:contain;
-    opacity:.82;transition:opacity var(--t-micro) var(--enter),transform var(--t-comp) var(--exit);
-  }
-  @media (hover:hover){.partners div:hover img{opacity:1;transform:translateY(-3px)}}
+  /* Логотипы: все одного формата 16:9, сетка 2×2, на телефоне в столбик */
+  .logos{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(1rem,3vw,2rem);margin-top:3rem}
+  @media (max-width:640px){.logos{grid-template-columns:1fr}}
+  .logos img{aspect-ratio:1672/941;object-fit:cover}
 
   /* Выступления */
   .talks{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(2rem,4vw,3rem) 2rem}
   @media (max-width:760px){.talks{grid-template-columns:1fr}}
-  .pics{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+  .pics{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
   .pics.one{grid-template-columns:1fr}
-  .pics>div{overflow:hidden;background:#fff}
-  .pics img{width:100%;height:280px;object-fit:cover;transition:transform 1.2s var(--exit)}
+  .pics img{height:280px;object-fit:cover}
   .pics img.contain{object-fit:contain}
-  @media (hover:hover){.pics>div:hover img{transform:scale(1.04)}}
   .talk .body{padding-top:1.1rem;border-top:1px solid var(--line);margin-top:1.1rem}
-  .talk h3{margin:0 0 .35rem;font-family:var(--display);font-size:1.14rem;font-weight:600;letter-spacing:-.015em;line-height:1.35}
+  .talk h3{margin:0 0 .35rem;font-family:var(--display);font-size:1.14rem;font-weight:600;letter-spacing:-.015em;line-height:1.35;color:var(--white)}
   .talk p{margin:0;font-size:.97rem;color:var(--muted)}
 
   .gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
   @media (max-width:860px){.gallery{grid-template-columns:repeat(2,1fr)}}
-  .gallery button{padding:0;border:0;overflow:hidden;background:#fff;cursor:zoom-in;aspect-ratio:3/4}
-  .gallery img{width:100%;height:100%;object-fit:contain;transition:transform 1.2s var(--exit)}
-  @media (hover:hover){.gallery button:hover img{transform:scale(1.05)}}
+  .gallery button{padding:0;border:0;background:none;cursor:zoom-in;aspect-ratio:3/4}
+  .gallery img{height:100%;object-fit:contain}
 
-  /* Клиенты */
-  .trust{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:clamp(1.5rem,4vw,3rem);align-items:center}
-  @media (max-width:860px){.trust{grid-template-columns:1fr}}
-  .trust p{color:var(--muted)}
+  /* Клиенты: текст колонкой, картинка по центру под ним */
+  .trust-text{max-width:46em}
+  .trust-text p{color:var(--white)}
   .trust .accent{
     margin-top:1.4rem;padding-left:1.1rem;border-left:2px solid var(--ember);
-    font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;line-height:1.4;color:var(--text);
+    font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;line-height:1.4;color:var(--white);
   }
-  .wide{margin-top:2rem}
+  .trust-pic{max-width:960px;margin:clamp(2.5rem,6vw,4rem) auto 0}
+
+  /* «Алмаз-Антей» в тексте — всегда ярко-белым */
+  .hl{color:var(--white);font-weight:500}
 
   /* Контакты */
   .contact{padding-bottom:1rem}
   .contact .big-t{
     margin:0;max-width:18em;
     font-family:var(--display);font-size:clamp(2rem,5vw,3.6rem);font-weight:700;
-    letter-spacing:-.035em;line-height:1.05;
+    letter-spacing:-.035em;line-height:1.05;color:var(--white);
   }
   .contact .big-t i{font-style:normal;color:var(--ember)}
   .contact p.note{margin:1.2rem 0 0;max-width:34em;color:var(--muted)}
@@ -375,7 +393,7 @@
     html{scroll-behavior:auto}
     .js .reveal,.js .name .ln span,.js .portrait img{opacity:1;transform:none}
     .js .dot,.js .name.in .ln span{animation:none}
-    .js .name .ln span{background-position:50% 0}
+    .js .name .ln span{background-position:150% 0}
     .progress{animation:none;transform:scaleX(0)}
     *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
   }
@@ -400,7 +418,7 @@
 
 <header class="hero" id="top">
   <div class="wrap">
-    <div class="portrait"><img src="img/portrait.webp" alt="Шандалин Денис Анатольевич" width="1122" height="1402"></div>
+    <div class="portrait ph"><img src="img/portrait.webp" alt="Шандалин Денис Анатольевич" width="1122" height="1402"></div>
     <div>
       <p class="kicker meta reveal" style="--i:0"><span class="dot"></span>ИИ в образовании · ИИ в бизнесе · ДПО</p>
       <h1 class="name"><span class="ln"><span>Шандалин</span></span><span class="ln"><span>Денис</span></span><span class="ln"><span>Анатольевич</span></span></h1>
@@ -416,7 +434,7 @@
       <div class="stats reveal" style="--i:6">
         <div class="stat"><b>25<i>+</i></b><span>лет в управлении активами и бизнес-процессами</span></div>
         <div class="stat"><b>400<i>+</i></b><span>специалистов обучено применению ИИ</span></div>
-        <div class="stat"><b>6</b><span>программ ДПО для «Алмаз-Антей»</span></div>
+        <div class="stat"><b>6</b><span>программ ДПО для <span class="hl">«Алмаз-Антей»</span></span></div>
       </div>
     </div>
   </div>
@@ -439,7 +457,7 @@
         <span class="go">↗</span>
       </a>
     </div>
-    <div class="frame banner reveal"><img src="img/banner-ecosystem.webp" alt="Цифровая защита — экосистема внедрения ИИ: Клуб «ИИ в образованИИ» и ANV-Ai" loading="lazy"></div>
+    <div class="ph banner reveal"><img src="img/ecosystem-wall.webp" alt="Цифровая защита — экосистема внедрения ИИ: Клуб «ИИ в образованИИ» и ANV-Ai" width="1672" height="941" loading="lazy"></div>
   </div>
 </section>
 
@@ -452,17 +470,18 @@
       <li class="row reveal"><span class="idx">03</span><span>Разработка и запуск образовательных программ по нейросетям для предпринимателей, руководителей и команд, в том числе для людей с ОВЗ</span></li>
       <li class="row reveal"><span class="idx">04</span><span>Обучено более 400 специалистов, предпринимателей и экспертов практическому применению ИИ</span></li>
       <li class="row reveal"><span class="idx">05</span><span>Работа с образовательными организациями федерального уровня и участие в развитии цифровых компетенций</span></li>
-      <li class="row reveal"><span class="idx">06</span><span>Участие в проектах с государственными структурами и промышленными компаниями, включая взаимодействие с Минобрнауки и «Алмаз-Антей»</span></li>
+      <li class="row reveal"><span class="idx">06</span><span>Участие в проектах с государственными структурами и промышленными компаниями, включая взаимодействие с Минобрнауки и <span class="hl">«Алмаз-Антей»</span></span></li>
       <li class="row reveal"><span class="idx">07</span><span>Проведение тренингов, стратегических сессий и индивидуальных программ обучения по ИИ</span></li>
       <li class="row reveal"><span class="idx">08</span><span>Формирование систем внедрения ИИ в компаниях — от диагностики до практического применения</span></li>
       <li class="row reveal"><span class="idx">09</span><span>Создание и внедрение решений на базе LLM для автоматизации задач, аналитики и коммуникаций</span></li>
       <li class="row reveal"><span class="idx">10</span><span>Выступления на профильных конференциях и участие в экспертных дискуссиях по ИИ, образованию и цифровой трансформации</span></li>
       <li class="row reveal"><span class="idx">11</span><span>Развитие Клуба «ИИ в образованИИ» как площадки для обмена практиками и внедрения технологий</span></li>
     </ul>
-    <div class="partners reveal">
-      <div><img src="img/partner-minobr.webp" alt="Министерство науки и высшего образования РФ" loading="lazy"></div>
-      <div><img src="img/partner-noc-vko.webp" alt="НОЦ ВКО «Алмаз-Антей»" loading="lazy"></div>
-      <div><img src="img/partner-rao.webp" alt="Российская академия образования" loading="lazy"></div>
+    <div class="logos">
+      <div class="ph reveal"><img src="img/logo-minobrnauki.webp" alt="Министерство науки и высшего образования Российской Федерации" width="1672" height="941" loading="lazy"></div>
+      <div class="ph reveal"><img src="img/logo-almaz-antey.webp" alt="Концерн ВКО «Алмаз-Антей»" width="1672" height="941" loading="lazy"></div>
+      <div class="ph reveal"><img src="img/logo-ran.webp" alt="Российская академия наук" width="1672" height="941" loading="lazy"></div>
+      <div class="ph reveal"><img src="img/logo-neftegaz.webp" alt="Нефтегаз — автоматизация отрасли" width="1672" height="941" loading="lazy"></div>
     </div>
   </div>
 </section>
@@ -473,35 +492,35 @@
     <div class="talks">
       <article class="talk reveal">
         <div class="pics">
-          <div><img class="contain" src="img/minobr-letter.webp" alt="Приглашение Минобрнауки России" loading="lazy"></div>
-          <div><img src="img/minobr-talk.webp" alt="Доклад в Минобрнауки" loading="lazy"></div>
+          <div class="ph"><img class="contain" src="img/minobr-letter.webp" alt="Приглашение Минобрнауки России" loading="lazy"></div>
+          <div class="ph"><img src="img/minobr-talk.webp" alt="Доклад в Минобрнауки" loading="lazy"></div>
         </div>
         <div class="body"><h3>Минобрнауки России</h3><p>Доклад о влиянии преподавательских сообществ на приобретение цифровых компетенций.</p></div>
       </article>
       <article class="talk reveal">
-        <div class="pics one"><div><img src="img/russia-center.webp" alt="Выступление в Национальном центре «Россия»" loading="lazy"></div></div>
+        <div class="pics one"><div class="ph"><img src="img/russia-center.webp" alt="Выступление в Национальном центре «Россия»" loading="lazy"></div></div>
         <div class="body"><h3>Национальный центр «Россия»</h3><p>X Конференция «Информационная безопасность и дети».</p></div>
       </article>
       <article class="talk reveal">
         <div class="pics">
-          <div><img class="contain" src="img/gramota.webp" alt="Грамота" loading="lazy"></div>
-          <div><img src="img/rao-forum.webp" alt="Выступление на форуме Российской академии образования" loading="lazy"></div>
+          <div class="ph"><img class="contain" src="img/gramota.webp" alt="Грамота" loading="lazy"></div>
+          <div class="ph"><img src="img/rao-forum.webp" alt="Выступление на форуме Российской академии образования" loading="lazy"></div>
         </div>
         <div class="body"><h3>Российская академия образования</h3><p>«Преподавательские сообщества как устойчивая среда для развития цифровых компетенций».</p></div>
       </article>
       <article class="talk reveal">
-        <div class="pics one"><div><img src="img/radio-mediametrics.webp" alt="Эфир на радио Mediametrics" loading="lazy"></div></div>
+        <div class="pics one"><div class="ph"><img src="img/radio-mediametrics.webp" alt="Эфир на радио Mediametrics" loading="lazy"></div></div>
         <div class="body"><h3><a class="lnk" href="https://radio.mediametrics.ru/intellectual_capital/75949/" target="_blank" rel="noopener">Эфир на радио Mediametrics ↗</a></h3><p>Рубрика «Интеллектуальный капитал», тема: ИИ-инструменты для научных исследований.</p></div>
       </article>
     </div>
 
     <h3 class="sub reveal">Сертификаты и благодарности</h3>
     <div class="gallery">
-      <button class="reveal" type="button"><img src="img/cert-msu-conf.webp" alt="Сертификат МГУ имени М. В. Ломоносова" loading="lazy"></button>
-      <button class="reveal" type="button"><img src="img/cert-msu-hse.webp" alt="Сертификат ВШСИ МГУ" loading="lazy"></button>
-      <button class="reveal" type="button"><img src="img/cert-msu-congress.webp" alt="Сертификат участника Международного конгресса, МГУ" loading="lazy"></button>
-      <button class="reveal" type="button"><img src="img/thanks-msu.webp" alt="Благодарность Высшей школы управления и инноваций МГУ" loading="lazy"></button>
-      <button class="reveal" type="button"><img src="img/cert-academic.webp" alt="Сертификат участника форума «Академическое сообщество 2025»" loading="lazy"></button>
+      <button class="ph reveal" type="button"><img src="img/cert-msu-conf.webp" alt="Сертификат МГУ имени М. В. Ломоносова" loading="lazy"></button>
+      <button class="ph reveal" type="button"><img src="img/cert-msu-hse.webp" alt="Сертификат ВШСИ МГУ" loading="lazy"></button>
+      <button class="ph reveal" type="button"><img src="img/cert-msu-congress.webp" alt="Сертификат участника Международного конгресса, МГУ" loading="lazy"></button>
+      <button class="ph reveal" type="button"><img src="img/thanks-msu.webp" alt="Благодарность Высшей школы управления и инноваций МГУ" loading="lazy"></button>
+      <button class="ph reveal" type="button"><img src="img/cert-academic.webp" alt="Сертификат участника форума «Академическое сообщество 2025»" loading="lazy"></button>
     </div>
   </div>
 </section>
@@ -510,15 +529,14 @@
   <div class="wrap">
     <div class="head reveal"><h2>Нам доверяют крупные организации</h2><span class="meta">04</span></div>
     <div class="trust">
-      <div>
-        <p class="reveal">Эксперты Клуба «ИИ в образованИИ» проводят практическое обучение по применению искусственного интеллекта для сотрудников предприятий АО «Концерн ВКО „Алмаз-Антей“».</p>
+      <div class="trust-text">
+        <p class="reveal">Эксперты Клуба «ИИ в образованИИ» проводят практическое обучение по применению искусственного интеллекта для сотрудников предприятий <span class="hl">АО «Концерн ВКО „Алмаз-Антей“»</span>.</p>
         <p class="reveal">Программы строятся на реальных рабочих задачах и включают аналитику, подготовку документов, автоматизацию рутины и безопасное применение ИИ.</p>
         <p class="reveal">Сейчас мы проводим 6 программ ДПО для сотрудников концерна.</p>
         <p class="accent reveal">Мы не просто рассказываем о нейросетях — мы помогаем внедрять их в рабочие процессы.</p>
       </div>
-      <div class="frame reveal"><img src="img/almaz-antey.webp" alt="ИИ не заменяет инженерную школу. Он усиливает её — Концерн ВКО «Алмаз-Антей» и Клуб «ИИ в образованИИ»" loading="lazy"></div>
+      <div class="ph trust-pic reveal"><img src="img/almaz-antey-ai.webp" alt="ИИ не заменяет инженерную школу. Он усиливает её — Концерн ВКО «Алмаз-Антей» и Клуб «ИИ в образованИИ»" width="1672" height="941" loading="lazy"></div>
     </div>
-    <div class="frame wide reveal"><img src="img/program-agents.webp" alt="Блок программы по ИИ-агентам: 2 дня практики, 52 сценария" loading="lazy"></div>
   </div>
 </section>
 
@@ -557,7 +575,7 @@
     var lb = document.getElementById('lb'), big = lb.querySelector('img');
     function open(src, alt) { big.src = src; big.alt = alt || ''; lb.classList.add('open'); document.body.style.overflow = 'hidden'; }
     function close() { lb.classList.remove('open'); document.body.style.overflow = ''; }
-    document.querySelectorAll('.talk img, .gallery img, .trust img, .wide img, .banner img, .portrait img').forEach(function (img) {
+    document.querySelectorAll('.ph img').forEach(function (img) {
       img.style.cursor = 'zoom-in';
       img.addEventListener('click', function () { open(img.currentSrc || img.src, img.alt); });
     });
