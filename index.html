@@ -279,8 +279,8 @@
     opacity:.75;
     transition:opacity var(--t-comp) var(--enter),transform var(--t-page) var(--enter);
   }
-  .ph img{
-    width:100%;
+  .ph img,.ph video{
+    display:block;width:100%;height:auto;
     -webkit-mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
     -webkit-mask-composite:source-in;
     mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
@@ -289,7 +289,7 @@
   }
   @media (hover:hover){
     .ph:hover::before{opacity:1;transform:scale(1.08)}
-    .ph:hover img{transform:scale(1.06)}
+    .ph:hover img,.ph:hover video{transform:scale(1.06)}
   }
   .banner{margin-top:2.4rem}
 
@@ -336,6 +336,17 @@
     font-family:var(--display);font-size:1.2rem;font-weight:600;letter-spacing:-.015em;line-height:1.4;color:var(--white);
   }
   .trust-pic{max-width:960px;margin:clamp(2.5rem,6vw,4rem) auto 0}
+  /* Видео играет без звука (иначе браузер не даст автозапуск), звук включается кнопкой */
+  .snd{
+    position:absolute;right:7%;bottom:9%;z-index:2;
+    min-height:38px;padding:.4rem .95rem;font-size:.68rem;
+    background:rgba(13,13,15,.62);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    cursor:pointer;
+  }
+  .snd .on,.snd[aria-pressed="true"] .off{display:none}
+  .snd[aria-pressed="true"] .on{display:inline}
+  @media (max-width:520px){.snd{right:5%;bottom:7%;min-height:34px;padding:.3rem .75rem;font-size:.62rem}}
 
   /* «Алмаз-Антей» в тексте — всегда ярко-белым */
   .hl{color:var(--white);font-weight:500}
@@ -543,7 +554,13 @@
         <p class="reveal">Сейчас мы проводим 6 программ ДПО для сотрудников концерна.</p>
         <p class="accent reveal">Мы не просто рассказываем о нейросетях — мы помогаем внедрять их в рабочие процессы.</p>
       </div>
-      <div class="ph trust-pic reveal"><img src="img/almaz-antey-ai.webp" alt="ИИ не заменяет инженерную школу. Он усиливает её — Концерн ВКО «Алмаз-Антей» и Клуб «ИИ в образованИИ»" width="1672" height="941" loading="lazy"></div>
+      <div class="ph trust-pic reveal">
+        <video src="video/almaz-antey-ai.mp4" poster="img/almaz-antey-ai.webp" width="1280" height="720" muted loop playsinline preload="none" data-autoplay aria-label="ИИ не заменяет инженерную школу. Он усиливает её — Концерн ВКО «Алмаз-Антей» и Клуб «ИИ в образованИИ»"></video>
+        <button class="btn snd" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4H4z" fill="currentColor" stroke="none"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/><path class="on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+          <span class="snd-t">Включить звук</span>
+        </button>
+      </div>
     </div>
   </div>
 </section>
@@ -588,6 +605,17 @@
       img.addEventListener('click', function () { open(img.currentSrc || img.src, img.alt); });
     });
     lb.addEventListener('click', close);
+
+    // Кнопка звука у видео
+    document.querySelectorAll('.snd').forEach(function (b) {
+      var v = b.parentElement.querySelector('video'), t = b.querySelector('.snd-t');
+      b.addEventListener('click', function () {
+        v.muted = !v.muted;
+        if (!v.muted && v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        b.setAttribute('aria-pressed', String(!v.muted));
+        t.textContent = v.muted ? 'Включить звук' : 'Выключить звук';
+      });
+    });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   })();
 
@@ -602,6 +630,8 @@
       name.classList.add('in');
       portrait.classList.add('in');
       items.forEach(function (el) { el.classList.add('in'); });
+      // «Меньше движения» — видео само не стартует, запуск штатными кнопками плеера
+      document.querySelectorAll('video[data-autoplay]').forEach(function (v) { v.controls = true; v.preload = 'metadata'; });
       return;
     }
 
@@ -624,6 +654,18 @@
 
     var io = null, timer = null;
 
+    // Видео грузится и стартует только когда до него докрутили — те же три
+    // источника сигнала, что и у проявления. Если браузер запретил автозапуск
+    // (режим энергосбережения на iPhone и т. п.), показываем кнопки плеера.
+    function startVideo(el) {
+      var v = el.querySelector('video[data-autoplay]');
+      if (!v) return;
+      v.muted = true;
+      v.preload = 'auto';
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { v.controls = true; });
+    }
+
     function sweep() {
       // У самого низа страницы порог снимается: докрутить некуда, и то, что
       // попало в нижние 12% экрана, иначе не проявилось бы никогда.
@@ -631,7 +673,7 @@
                      document.documentElement.scrollHeight - 2;
       var edge = atBottom ? Infinity : window.innerHeight * 0.88;
       pending = pending.filter(function (el) {
-        if (el.getBoundingClientRect().top < edge) { el.classList.add('in'); return false; }
+        if (el.getBoundingClientRect().top < edge) { el.classList.add('in'); startVideo(el); return false; }
         return true;
       });
       if (!pending.length) {
