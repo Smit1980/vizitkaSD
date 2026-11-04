@@ -158,6 +158,14 @@
   .btn.solid{background:var(--text);border-color:var(--text);color:var(--bg)}
   .btn.solid:hover{border-color:var(--ember)}
   .nav .btn{min-height:38px;padding:.4rem 1rem;font-size:.7rem}
+  .language{min-height:38px;padding:.35rem .5rem;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;font-size:.75rem;cursor:pointer}
+  .language:focus-visible{outline:2px solid var(--ember);outline-offset:4px}
+  [dir="rtl"] .links{margin-left:0;margin-right:auto}
+  [dir="rtl"] .stat+.stat{border-left:0;border-right:1px solid var(--line-soft)}
+  [dir="rtl"] .trust .accent{padding-left:0;padding-right:1.1rem;border-left:0;border-right:2px solid var(--ember)}
+  [lang="fa"] body,[lang="fa"] .name .ln span,[lang="fa"] .meta,[lang="fa"] .links a,[lang="fa"] .btn,[lang="fa"] .sub,[lang="fa"] .stat>span{font-family:Tahoma,Arial,sans-serif;letter-spacing:normal}
+  @media (max-width:860px){[dir="rtl"] .nav .btn{margin-left:0;margin-right:auto}}
+  @media (max-width:520px){.nav .wrap{gap:.5rem}.nav .btn{padding:.4rem .55rem}.brand{font-size:.65rem;letter-spacing:0}[dir="rtl"] .stat+.stat{border-right:0}}
   .btn.big{min-height:56px;padding:.8rem 2rem;font-size:.85rem}
 
   /* ---------- Hero ---------- */
@@ -430,6 +438,9 @@
       <a href="#trust">Клиенты</a>
       <a href="#contact">Контакты</a>
     </div>
+    <select id="language" class="language" aria-label="Язык / Language / زبان">
+      <option value="ru">RU</option><option value="en">EN</option><option value="fa">فارسی</option>
+    </select>
     <a class="btn" href="https://t.me/smitAnin" target="_blank" rel="noopener"><span>Связаться</span><span class="arr">→</span></a>
   </div>
 </nav>
@@ -710,5 +721,6 @@
     sweep();
   })();
 </script>
+<script src="i18n.js"></script>
 </body>
 </html>
