@@ -10,6 +10,7 @@
       title: 'Denis Shandalin - AI implementation expert',
       description: 'Denis Shandalin is a researcher, entrepreneur and expert in implementing artificial intelligence in education and business.',
       text: {
+        '.language-label': 'Language',
         '.brand': '<span class="dot"></span>Shandalin D. A.',
         '.links a[href="#about"]': 'Projects',
         '.links a[href="#skills"]': 'Expertise',
@@ -57,7 +58,7 @@
         '#trust .head h2': 'Trusted by major organizations',
         '.trust-text p:nth-child(1)': 'Experts from the AI in Education Club provide practical training in artificial intelligence for employees of <span class="hl">Almaz-Antey Air and Space Defence Corporation</span>.',
         '.trust-text p:nth-child(2)': 'Programs are built around real work tasks and include analytics, document preparation, routine automation and safe AI use.',
-        '.trust-text p:nth-child(3)': 'We currently deliver six continuing professional education programs for the corporation’s employees.',
+        '.trust-text p:nth-child(3)': 'We currently deliver seven continuing professional education programs for the corporation’s employees.',
         '.trust-text p:nth-child(4)': 'We do more than talk about neural networks: we help integrate them into work processes.',
         '#contact .head h2': 'Contact',
         '.contact .big-t': 'Discuss AI training or implementation<i>.</i>',
@@ -96,6 +97,7 @@
       title: 'دنیس شاندالین - متخصص پیاده سازی هوش مصنوعی',
       description: 'دنیس شاندالین پژوهشگر، کارآفرین و متخصص پیاده سازی هوش مصنوعی در آموزش و کسب و کار است.',
       text: {
+        '.language-label': 'زبان',
         '.brand': '<span class="dot"></span>شاندالین د. آ.',
         '.links a[href="#about"]': 'پروژه ها',
         '.links a[href="#skills"]': 'تخصص ها',
@@ -143,7 +145,7 @@
         '#trust .head h2': 'سازمان های بزرگ به ما اعتماد دارند',
         '.trust-text p:nth-child(1)': 'متخصصان باشگاه هوش مصنوعی در آموزش، آموزش عملی هوش مصنوعی را برای کارکنان <span class="hl">شرکت پدافند هوافضای آلماز-آنتی</span> برگزار می کنند.',
         '.trust-text p:nth-child(2)': 'برنامه ها بر اساس وظایف واقعی کاری طراحی شده اند و تحلیل، آماده سازی اسناد، خودکارسازی کارهای تکراری و استفاده ایمن از هوش مصنوعی را در بر می گیرند.',
-        '.trust-text p:nth-child(3)': 'اکنون شش برنامه آموزش حرفه ای برای کارکنان این مجموعه برگزار می کنیم.',
+        '.trust-text p:nth-child(3)': 'اکنون هفت برنامه آموزش حرفه ای برای کارکنان این مجموعه برگزار می کنیم.',
         '.trust-text p:nth-child(4)': 'ما فقط درباره شبکه های عصبی صحبت نمی کنیم؛ برای پیاده سازی آن ها در فرایندهای کاری کمک می کنیم.',
         '#contact .head h2': 'تماس',
         '.contact .big-t': 'درباره آموزش یا پیاده سازی هوش مصنوعی گفتگو کنیم<i>.</i>',
